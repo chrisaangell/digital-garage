@@ -1,15 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '@/lib/prisma'
 
 export const dynamic = 'force-dynamic'
-
-if (!process.env.DATABASE_URL) {
-  throw new Error('DATABASE_URL environment variable is not set')
-}
-
-const prisma = new PrismaClient({
-  datasourceUrl: process.env.DATABASE_URL,
-})
 
 export async function POST(req: NextRequest) {
   try {
@@ -32,7 +24,7 @@ export async function POST(req: NextRequest) {
   } catch (error: unknown) {
     const err = error as { code?: string; message?: string }
     if (err.code === 'P2002') {
-      return NextResponse.json({ error: 'You\'re already on the list!' }, { status: 409 })
+      return NextResponse.json({ error: "You're already on the list!" }, { status: 409 })
     }
     console.error('Waitlist error:', error)
     return NextResponse.json({ error: 'Something went wrong' }, { status: 500 })
